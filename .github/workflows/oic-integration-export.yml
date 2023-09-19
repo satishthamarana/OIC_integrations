@@ -68,5 +68,11 @@ jobs:
     
       - name: Import Integration Step
         run: |
-              echo "This is an Import Integration step"
-              curl -vvv -s -u ${{ secrets.OIC_USERNAME }}:${{ secrets.OIC_PASSWORD }} -H "Accept: application/json" -X PUT -F "file=@${{ needs.export-integration.outputs.exported_file }};type=application/octet-stream" ${{ secrets.OIC_URL }}/ic/api/integration/v1/integrations/archive
+          echo "This is an Import Integration step"
+          import_file_path="${GITHUB_WORKSPACE}/myfile_01.iar"
+          if curl -vvv -u "${{ secrets.OIC_USERNAME }}:${{ secrets.OIC_PASSWORD }}" -H "Accept: application/json" -X PUT -F "file=@${import_file_path};type=application/octet-stream" "${{ secrets.OIC_URL }}/ic/api/integration/v1/integrations/archive"; then
+            echo "Imported successfully!"
+          else
+            echo "Import failed."
+            exit 1
+          fi
