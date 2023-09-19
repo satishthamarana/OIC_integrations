@@ -1,4 +1,4 @@
-name: export integration
+name: Export and Import Integration
 
 on:
   workflow_dispatch:
@@ -17,8 +17,11 @@ on:
         required: true
 
 jobs:
-  clone-integration:
+  export-integration:
     runs-on: ubuntu-latest
+    
+    outputs:
+      exported_file: ${{ steps.export.outputs.exported_file }}
 
     steps:
       - name: Checkout code
@@ -29,12 +32,8 @@ jobs:
         with:
           python-version: '3.10.8'  # Replace with the desired Python version
 
-      # - name: Install dependencies
-      #   run: |
-      #     pip install -r requirements.txt  # If you have any Python package dependencies
-
-      # - name: Run Python script
-      #   run: python oic-cd.py ${{ inputs.oic-username }} ${{ inputs.oic-password }} ${{ inputs.oic-url }} ${{ inputs.app-var }}
+      - name: Run Python script
+        run: python oic-cd.py ${{ inputs.oic-username }} ${{ inputs.oic-password }} ${{ inputs.oic-url }} ${{ inputs.app-var }}
       - name: Debug Environment Variables
         run: |
           echo "OIC_USERNAME: ${{ secrets.OIC_USERNAME }}"
@@ -52,12 +51,22 @@ jobs:
             exit 1
           fi    
 
-      # - name: Export Integration Step
-      #   run: |
-      #     echo "This is an Export Integration step"
-      #     if curl -vvv -u ${{ inputs.oic-username }}:${{ inputs.oic-password }} -o "myfile_01.iar" ${{ inputs.oic-url }}/ic/api/integration/v1/integrations/${{ inputs.app-var }}/archive; then
-      #       echo "Exported successfully!"
-      #     else
-      #       echo "Export failed."
-      #       exit 1
-      #     fi
+  import-integration:
+    needs: export-integration
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # Replace with the desired Python version
+
+      - name: Debug Environment Variables
+        run: |
+              echo "OIC_USERNAME: ${{ secrets.OIC_USERNAME }}"
+              echo "OIC_URL: ${{ secrets.OIC_URL }}"
+    
+      - name: Import Integration Step
+        run: |
+              echo "This is an Import Integration step"
+              curl -vvv -s -u ${{ secrets.OIC_USERNAME }}:${{ secrets.OIC_PASSWORD }} -H "Accept: application/json" -X PUT -F "file=@${{ needs.export-integration.outputs.exported_file }};type=application/octet-stream" ${{ secrets.OIC_URL }}/ic/api/integration/v1/integrations/archive
