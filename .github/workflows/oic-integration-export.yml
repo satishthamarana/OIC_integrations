@@ -1,5 +1,4 @@
-name: Export and Import Integration
-
+name: export integration
 on:
   workflow_dispatch:
     inputs:
@@ -15,18 +14,12 @@ on:
       app-var:
         description: 'APP_VAR value'
         required: true
-
 jobs:
-  export-integration:
+  clone-integration:
     runs-on: ubuntu-latest
-    
-    outputs:
-      exported_file: ${{ steps.export.outputs.exported_file }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2  # Check out the code including your Python script
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -34,6 +27,7 @@ jobs:
 
       - name: Run Python script
         run: python oic-cd.py ${{ inputs.oic-username }} ${{ inputs.oic-password }} ${{ inputs.oic-url }} ${{ inputs.app-var }}
+
       - name: Debug Environment Variables
         run: |
           echo "OIC_USERNAME: ${{ secrets.OIC_USERNAME }}"
@@ -43,36 +37,4 @@ jobs:
       - name: Export Integration Step
         run: |
           echo "This is an Export Integration step"
-          export_file_path="${GITHUB_WORKSPACE}/myfile_01.iar"
-          if curl -vvv -u ${{ inputs.oic-username }}:${{ inputs.oic-password }} -o "${export_file_path}" ${{ inputs.oic-url }}/ic/api/integration/v1/integrations/${{ inputs.app-var }}/archive; then
-            echo "Exported successfully! File exported to: ${export_file_path}"
-          else
-            echo "Export failed."
-            exit 1
-          fi    
-
-  import-integration:
-    needs: export-integration
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10.8'  # Replace with the desired Python version
-
-      - name: Debug Environment Variables
-        run: |
-              echo "OIC_USERNAME: ${{ secrets.OIC_USERNAME }}"
-              echo "OIC_URL: ${{ secrets.OIC_URL }}"
-    
-      - name: Import Integration Step
-        run: |
-          echo "This is an Import Integration step"
-          import_file_path="${GITHUB_WORKSPACE}/myfile_01.iar"
-          if curl -vvv -u "${{ secrets.OIC_USERNAME }}:${{ secrets.OIC_PASSWORD }}" -H "Accept: application/json" -X PUT -F "file=@${import_file_path};type=application/octet-stream" "${{ secrets.OIC_URL }}/ic/api/integration/v1/integrations/archive"; then
-            echo "Imported successfully!"
-          else
-            echo "Import failed."
-            exit 1
-          fi
+          curl -vvv -u ${{ inputs.oic-username }}:${{ inputs.oic-password }} -o "myfile_01.iar" ${{ inputs.oic-url }}/ic/api/integration/v1/integrations/${{ inputs.app-var }}/archive

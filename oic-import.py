@@ -1,4 +1,3 @@
-
 import os
 
 # Define environment variables
