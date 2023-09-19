@@ -26,9 +26,9 @@ jobs:
         with:
           python-version: '3.10.8'  # Replace with the desired Python version
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt  # If you have any Python package dependencies
+      # - name: Install dependencies
+      #   run: |
+      #     pip install -r requirements.txt  # If you have any Python package dependencies
 
       - name: Run Python script
         run: python oic-cd.py ${{ inputs.oic-username }} ${{ inputs.oic-password }} ${{ inputs.oic-url }} ${{ inputs.app-var }}
