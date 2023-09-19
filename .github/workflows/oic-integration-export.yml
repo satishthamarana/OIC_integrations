@@ -40,8 +40,24 @@ jobs:
           echo "OIC_USERNAME: ${{ secrets.OIC_USERNAME }}"
           echo "OIC_URL: ${{ secrets.OIC_URL }}"
           echo "APP_VAR: ${{ secrets.APP_VAR }}"
-
+          
       - name: Export Integration Step
         run: |
           echo "This is an Export Integration step"
-          curl -vvv -u ${{ inputs.oic-username }}:${{ inputs.oic-password }} -o "myfile_01.iar" ${{ inputs.oic-url }}/ic/api/integration/v1/integrations/${{ inputs.app-var }}/archive
+          export_file_path="${GITHUB_WORKSPACE}/myfile_01.iar"
+          if curl -vvv -u ${{ inputs.oic-username }}:${{ inputs.oic-password }} -o "${export_file_path}" ${{ inputs.oic-url }}/ic/api/integration/v1/integrations/${{ inputs.app-var }}/archive; then
+            echo "Exported successfully! File exported to: ${export_file_path}"
+          else
+            echo "Export failed."
+            exit 1
+          fi    
+
+      # - name: Export Integration Step
+      #   run: |
+      #     echo "This is an Export Integration step"
+      #     if curl -vvv -u ${{ inputs.oic-username }}:${{ inputs.oic-password }} -o "myfile_01.iar" ${{ inputs.oic-url }}/ic/api/integration/v1/integrations/${{ inputs.app-var }}/archive; then
+      #       echo "Exported successfully!"
+      #     else
+      #       echo "Export failed."
+      #       exit 1
+      #     fi
