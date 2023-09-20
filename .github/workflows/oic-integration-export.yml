@@ -14,6 +14,9 @@ on:
       app-var:
         description: 'APP_VAR value'
         required: true
+      app-var-version:
+        description: 'APP_VAR version'
+        required: true  
 jobs:
   export-integration:
     runs-on: ubuntu-latest
@@ -27,6 +30,6 @@ jobs:
           python-version: '3.10.8'  # Replace with the desired Python version
 
       - name: Run Python script
-        run: python oic-cd.py ${{ inputs.oic-username }} ${{ inputs.oic-password }} ${{ inputs.oic-url }} ${{ inputs.app-var }}
+        run: python oic-cd.py ${{ inputs.oic-username }} ${{ inputs.oic-password }} ${{ inputs.oic-url }} ${{ inputs.app-var }} ${{ inputs.app-var-version }}
 
       

@@ -1,15 +1,17 @@
 import os
 import time
+import sys
 
 # Define environment variables
-OIC_USERNAME = os.environ.get("OIC_USERNAME")
-OIC_PASSWORD = os.environ.get("OIC_PASSWORD")
-URL = os.environ.get("URL")
-APP_VAR = os.environ.get("APP_VAR")
+OIC_USERNAME = sys.argv[1]
+OIC_PASSWORD = sys.argv[2]
+URL = sys.argv[3]
+APP_VAR = sys.argv[4]
+APP_VAR_VER = sys.argv[5]
 
 # Export Integration Step
 print("This is an Export Integration step")
-os.system(f'curl -vvv -u {OIC_USERNAME}:{OIC_PASSWORD} -o "myfile_01.iar" {URL}/ic/api/integration/v1/integrations/{APP_VAR}/archive')
+os.system(f'curl -vvv -X GET -u {OIC_USERNAME}:{OIC_PASSWORD} -o "myfile_01.iar" {URL}/ic/api/integration/v1/integrations/{APP_VAR}%7C{APP_VAR_VER}/archive')
 time.sleep(30)
 
 # Import Integration Step
