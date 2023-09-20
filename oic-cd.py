@@ -9,7 +9,7 @@ APP_VAR = os.environ.get("APP_VAR")
 
 # Export Integration Step
 print("This is an Export Integration step")
-os.system(f'curl -vvv GET -u {OIC_USERNAME}:{OIC_PASSWORD} -o "myfile_01.iar" {URL}/ic/api/integration/v1/integrations/{APP_VAR}/archive')
+os.system(f'curl -vvv -X GET -u {OIC_USERNAME}:{OIC_PASSWORD} -o "myfile_01.iar" {URL}/ic/api/integration/v1/integrations/{APP_VAR}/archive')
 time.sleep(30)
 
 # Import Integration Step
