@@ -15,11 +15,12 @@ on:
         description: 'APP_VAR value'
         required: true
 jobs:
-  clone-integration:
+  export-integration:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2  # Check out the code including your Python script
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -28,13 +29,4 @@ jobs:
       - name: Run Python script
         run: python oic-cd.py ${{ inputs.oic-username }} ${{ inputs.oic-password }} ${{ inputs.oic-url }} ${{ inputs.app-var }}
 
-      - name: Debug Environment Variables
-        run: |
-          echo "OIC_USERNAME: ${{ secrets.OIC_USERNAME }}"
-          echo "OIC_URL: ${{ secrets.OIC_URL }}"
-          echo "APP_VAR: ${{ secrets.APP_VAR }}"
-          
-      - name: Export Integration Step
-        run: |
-          echo "This is an Export Integration step"
-          curl -vvv -u ${{ inputs.oic-username }}:${{ inputs.oic-password }} -o "myfile_01.iar" ${{ inputs.oic-url }}/ic/api/integration/v1/integrations/${{ inputs.app-var }}/archive
+      
