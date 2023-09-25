@@ -1,22 +1,9 @@
 name: export integration
 on:
-  workflow_dispatch:
-    inputs:
-      oic-username:
-        description: 'Oracle Integration Cloud Username'
-        required: true
-      oic-password:
-        description: 'Oracle Integration Cloud Password'
-        required: true
-      oic-url:
-        description: 'Oracle Integration Cloud URL'
-        required: true
-      app-var:
-        description: 'APP_VAR value'
-        required: true
-      app-var-version:
-        description: 'APP_VAR version'
-        required: true  
+  push:
+    branches:
+      - master
+
 jobs:
   export-integration:
     runs-on: ubuntu-latest
@@ -30,6 +17,4 @@ jobs:
           python-version: '3.10.8'  # Replace with the desired Python version
 
       - name: Run Python script
-        run: python oic-cd.py ${{ inputs.oic-username }} ${{ inputs.oic-password }} ${{ inputs.oic-url }} ${{ inputs.app-var }} ${{ inputs.app-var-version }}
-
-      
+        run: python oic-cd.py ${{ secrets.OIC_USERNAME }} ${{ secrets.OIC_PASSWORD }} ${{ secrets.OIC_URL }} ${{ secrets.APP_VAR }} ${{ secrets.APP_VAR_VERSION }}
